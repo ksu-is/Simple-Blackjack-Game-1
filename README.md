@@ -1,3 +1,3 @@
 # Simple-Blackjack-Game
-This is my first Python project  and my first attempt at building a program using OOP
+This python project will modify the simple blackjack game. The end goal is to add a GUI and multiplayer mode.
 

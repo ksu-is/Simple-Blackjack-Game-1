@@ -276,8 +276,15 @@ def title_screen():
     #Arrange Text
     font1 = pygame.font.SysFont('arialbold', 45)
     font2 = pygame.font.SysFont('arialbold', 15)
+    font3 = pygame.font.SysFont('arial', 15)
     titleTxt = font1.render('BlackjackGUI', 1, white)
-    subTxt = font2.render('Click anywhere to play', 1, white)
+    subTxt = font2.render('Click "play" to start', 1, white)
+    playTxt = font3.render('Play', 1, black)
+    quitTxt = font3.render('Quit', 2, black)
+
+    #Establish buttons
+    playB = pygame.draw.rect(background, gray, (490, 400, 75, 25))
+    quitB = pygame.draw.rect(background, gray, (680, 400, 75, 25))
 
     #Event loop for title screen
     while True:
@@ -286,14 +293,17 @@ def title_screen():
 
             if event.type == QUIT:
                 pygame.quit()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                single_player() #Run main game if user clicks. 
-                                #Later mode options will be added to title screen with their own buttons.
+            elif event.type == pygame.MOUSEBUTTONDOWN and playB.collidepoint(pygame.mouse.get_pos()):
+                single_player() #Run main game if user clicks play button. 
+            elif event.type == pygame.MOUSEBUTTONDOWN and quitB.collidepoint(pygame.mouse.get_pos()):
+                pygame.quit()
 
         #Show text on background
         screen.blit(background, (0, 0))
         screen.blit(titleTxt, (530, 300))
-        screen.blit(subTxt, (572, 350))   
+        screen.blit(subTxt, (572, 350))
+        screen.blit(playTxt, (510, 400)) 
+        screen.blit(quitTxt, (700, 400))
 
         pygame.display.update() #GET THIS DISPLAY TO SHOW WHAT I JUST CODED.
 

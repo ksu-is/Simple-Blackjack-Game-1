@@ -58,6 +58,8 @@ diamondK = pygame.image.load('Blackjack-Python-master/resources/cards/kd.png')
 clubK = pygame.image.load('Blackjack-Python-master/resources/cards/kc.png')
 heartK = pygame.image.load('Blackjack-Python-master/resources/cards/kh.png')
 spadeK = pygame.image.load('Blackjack-Python-master/resources/cards/ks.png')
+jokerR = pygame.image.load('Blackjack-Python-master/resources/cards/joker1.png')
+jokerB = pygame.image.load('Blackjack-Python-master/resources/cards/joker2.png')
 
 #Set Icon
 pygame.display.set_icon(icon)
@@ -93,6 +95,7 @@ card10 = [ diamond10, club10, heart10, spade10, \
             diamondJ, clubJ, heartJ, spadeJ, \
             diamondQ, clubQ, heartQ, spadeQ, \
             diamondK, clubK, heartK, spadeK ]
+card21 = [ jokerR, jokerB ]
 
 def getAmt(card):
     ''' Returns the amount the card is worth.
@@ -121,6 +124,33 @@ E.g. Ace is default 11. 10/Jack/Queen/King is 10.'''
         print('getAmt broke')
         exit()
 
+def getAmtJ(card): #getAmt, but with the joker
+    if card in cardA:
+        return 11
+    elif card in card2:
+        return 2
+    elif card in card3:
+        return 3
+    elif card in card4:
+        return 4
+    elif card in card5:
+        return 5
+    elif card in card6:
+        return 6
+    elif card in card7:
+        return 7
+    elif card in card8:
+        return 8
+    elif card in card9:
+        return 9
+    elif card in card10:
+        return 10
+    elif card in card21:
+        return 21
+    else:
+        print('getAmt broke')
+        exit()      
+
 def genCard(cList, xList):
     '''Generates an card from cList, removes it from cList, and appends it to xList.
 Returns if card is Ace and the card itself.'''
@@ -147,6 +177,26 @@ Returns if card is Ace and the total amount of the cards per person.'''
     dealA += cA
     return getAmt(card1) + getAmt(card3), userA, getAmt(card2) + getAmt(card4), dealA
 
+def initGameJ(cList, uList, dList):
+    #Generates two cards for dealer and user, one at a time for each.
+    #Returns if card is Ace and the total amount of the cards per person.
+    userA = 0
+    dealA = 0
+
+    card1, cA = genCard(cList, uList)
+    userA += cA
+
+    card2, cA = genCard(cList, dList)
+    dealA += cA
+
+    card3, cA = genCard(cList, uList)
+    userA += cA
+
+    card4, cA = genCard(cList, dList)
+    dealA += cA
+
+    return getAmtJ(card1) + getAmtJ(card3), userA, getAmtJ(card2) + getAmtJ(card4), dealA
+
 def single_player(): #Changed name to indicate mode
     #Local Variable
     ccards = copy.copy(cards)
@@ -171,11 +221,12 @@ def single_player(): #Changed name to indicate mode
     #Fill Background
     background = pygame.Surface(screen.get_size())
     background = background.convert()
-    background.fill((80, 150, 15))
+    background = pygame.image.load('Blackjack-Python-master/resources/table.png')
+
     #Change positions of buttons
-    hitB = pygame.draw.rect(background, gray, (10, 680, 75, 25))
-    standB = pygame.draw.rect(background, gray, (95, 680, 75, 25))
-    ratioB = pygame.draw.rect(background, gray, (555, 660, 75, 50))
+    hitB = pygame.draw.rect(background, gray, (50, 525, 75, 25))
+    standB = pygame.draw.rect(background, gray, (140, 525, 75, 25))
+    ratioB = pygame.draw.rect(background, gray, (95, 575, 75, 50))
 
     #Event Loop
     while True:
@@ -234,20 +285,20 @@ def single_player(): #Changed name to indicate mode
 
         #Change positioning of text w/ buttons
         screen.blit(background, (0, 0))
-        screen.blit(hitTxt, (39, 680))
-        screen.blit(standTxt, (116, 680))
-        screen.blit(winTxt, (565, 660))
-        screen.blit(loseTxt, (565, 680))
+        screen.blit(hitTxt, (79, 525))
+        screen.blit(standTxt, (156, 525))
+        screen.blit(winTxt, (100, 580))
+        screen.blit(loseTxt, (100, 600))
 
         #displays dealer's cards
         for card in dealCard:
-            x = 10 + dealCard.index(card) * 110
-            screen.blit(card, (x, 10))
-        screen.blit(cBack, (120, 10))
+            x = 50 + dealCard.index(card) * 110
+            screen.blit(card, (x, 50))
+        screen.blit(cBack, (160, 50))
 
         #displays player's cards
         for card in userCard:
-            x = 10 + userCard.index(card) * 110
+            x = 225 + userCard.index(card) * 110
             screen.blit(card, (x, 500)) #Change position of user cards
 
         #when game is over, draws restart button and text, and shows the dealer's second card
@@ -255,7 +306,124 @@ def single_player(): #Changed name to indicate mode
             screen.blit(gameoverTxt, (555, 260))
             restartB = pygame.draw.rect(background, gray, (555, 300, 75, 25))
             screen.blit(restartTxt, (567, 302))
-            screen.blit(dealCard[1], (120, 10))
+            screen.blit(dealCard[1], (160, 50))    
+            
+        pygame.display.update()
+
+def single_playerJ(): #Changed name to indicate mode
+    #Local Variable
+    ccards = copy.copy(cards)
+    stand = False
+    userCard = []
+    dealCard = []
+    winNum = 0
+    loseNum = 0
+   
+    #Initialize Game
+    pygame.init()
+    #Larger screen size
+    screen = pygame.display.set_mode((1280, 720))
+    pygame.display.set_caption('BlackjackGUI')
+    font = pygame.font.SysFont('arial', 15)
+    hitTxt = font.render('Hit', 1, black)
+    standTxt = font.render('Stand', 1, black)
+    restartTxt = font.render('Restart', 1, black)
+    gameoverTxt = font.render('GAME OVER', 1, white)
+    userSum, userA, dealSum, dealA = initGameJ(ccards, userCard, dealCard)
+
+    #Fill Background
+    background = pygame.Surface(screen.get_size())
+    background = background.convert()
+    background = pygame.image.load('Blackjack-Python-master/resources/table.png')
+
+    #Change positions of buttons
+    hitB = pygame.draw.rect(background, gray, (50, 525, 75, 25))
+    standB = pygame.draw.rect(background, gray, (140, 525, 75, 25))
+    ratioB = pygame.draw.rect(background, gray, (95, 575, 75, 50))
+
+    #Event Loop
+    while True:
+        #checks if game is over
+        gameover = True if (stand == True) or len(userCard) == 5 else False
+        if len(userCard) == 2 and userSum == 21:
+            gameover = True
+        elif len(dealCard) == 2 and dealSum == 21:
+            gameover = True
+        elif userSum > 21:
+            gameover = True
+        elif dealSum > 21:
+            gameover = True
+
+        #background needs to be redisplayed because it gets updated
+        winTxt = font.render('Wins: %i' % winNum, 1, black)
+        loseTxt = font.render('Losses: %i' % loseNum, 1, black)
+
+        #checks for mouse clicks on buttons
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+            elif event.type == pygame.MOUSEBUTTONDOWN and not (gameover or stand) and hitB.collidepoint(pygame.mouse.get_pos()):
+                #gives player a card if they don't break blackjack rules
+                card, cA = genCard(ccards, userCard)
+                userA += cA
+                userSum += getAmtJ(card)
+                print('User: %i' % userSum) #corrected syntax error
+                while userSum > 21 and userA > 0:
+                    userA -= 1
+                    userSum -= 10
+            elif event.type == pygame.MOUSEBUTTONDOWN and not gameover and standB.collidepoint(pygame.mouse.get_pos()):
+                #when player stands, the dealer plays
+                stand = True
+                while dealSum <= userSum and dealSum < 17:
+                    card, cA = genCard(ccards, dealCard)
+                    dealA += cA
+                    dealSum += getAmtJ(card)
+                    print('Dealer: %i' % dealSum) #corrected syntax error
+                    while dealSum > 21 and dealA > 0:
+                        dealA -= 1
+                        dealSum -= 10
+            elif event.type == pygame.MOUSEBUTTONDOWN and (gameover or stand) and restartB.collidepoint(pygame.mouse.get_pos()):
+                #restarts the game, updating scores
+                if userSum == dealSum:
+                    pass
+                elif userSum <= 21 and len(userCard) == 5:
+                    winNum += 1
+                elif userSum <= 21 and dealSum < userSum or dealSum > 21:
+                    winNum += 1
+                else:
+                    loseNum += 1
+                gameover = False
+                stand = False
+                userCard = []
+                dealCard = []
+                ccards = copy.copy(cards)
+                userSum, userA, dealSum, dealA = initGameJ(ccards, userCard, dealCard)
+                restartB = pygame.draw.rect(background, (80, 150, 15), (555, 300, 75, 25)) #Hide button during game
+
+        #Change positioning of text w/ buttons
+        screen.blit(background, (0, 0))
+        screen.blit(hitTxt, (79, 525))
+        screen.blit(standTxt, (156, 525))
+        screen.blit(winTxt, (100, 580))
+        screen.blit(loseTxt, (100, 600))
+
+        #displays dealer's cards
+        for card in dealCard:
+            x = 50 + dealCard.index(card) * 110
+            screen.blit(card, (x, 50))
+        screen.blit(cBack, (160, 50))
+
+        #displays player's cards
+        for card in userCard:
+            x = 225 + userCard.index(card) * 110
+            screen.blit(card, (x, 500)) #Change position of user cards
+
+        #when game is over, draws restart button and text, and shows the dealer's second card
+        if gameover or stand:
+            screen.blit(gameoverTxt, (555, 260))
+            restartB = pygame.draw.rect(background, gray, (555, 300, 75, 25))
+            screen.blit(restartTxt, (567, 302))
+            screen.blit(dealCard[1], (160, 50))
             
         pygame.display.update()
 
@@ -278,13 +446,15 @@ def title_screen():
     font2 = pygame.font.SysFont('arialbold', 15)
     font3 = pygame.font.SysFont('arial', 15)
     titleTxt = font1.render('BlackjackGUI', 1, white)
-    subTxt = font2.render('Click "play" to start', 1, white)
-    playTxt = font3.render('Play', 1, black)
-    quitTxt = font3.render('Quit', 2, black)
+    subTxt = font2.render('Click on a mode to start', 1, white)
+    playTxt = font3.render('Normal', 1, black)
+    quitTxt = font3.render('Quit', 1, black)
+    jokerTxt = font3.render('Joker', 1, black)
 
     #Establish buttons
-    playB = pygame.draw.rect(background, gray, (490, 400, 75, 25))
-    quitB = pygame.draw.rect(background, gray, (680, 400, 75, 25))
+    playB = pygame.draw.rect(background, gray, (510, 400, 75, 25))
+    playJB = pygame.draw.rect(background, gray, (660, 400, 75, 25))
+    quitB = pygame.draw.rect(background, gray, (585, 440, 75, 25))
 
     #Event loop for title screen
     while True:
@@ -295,6 +465,8 @@ def title_screen():
                 pygame.quit()
             elif event.type == pygame.MOUSEBUTTONDOWN and playB.collidepoint(pygame.mouse.get_pos()):
                 single_player() #Run main game if user clicks play button. 
+            elif event.type == pygame.MOUSEBUTTONDOWN and playJB.collidepoint(pygame.mouse.get_pos()):
+                single_playerJ() #Run joker game if user clicks play button. 
             elif event.type == pygame.MOUSEBUTTONDOWN and quitB.collidepoint(pygame.mouse.get_pos()):
                 pygame.quit()
 
@@ -302,8 +474,9 @@ def title_screen():
         screen.blit(background, (0, 0))
         screen.blit(titleTxt, (530, 300))
         screen.blit(subTxt, (572, 350))
-        screen.blit(playTxt, (510, 400)) 
-        screen.blit(quitTxt, (700, 400))
+        screen.blit(playTxt, (520, 400)) 
+        screen.blit(jokerTxt, (680, 400))
+        screen.blit(quitTxt, (605, 440))
 
         pygame.display.update() #GET THIS DISPLAY TO SHOW WHAT I JUST CODED.
 

@@ -81,7 +81,8 @@ cards = [ diamondA, clubA, heartA, spadeA, \
           diamond10, club10, heart10, spade10, \
           diamondJ, clubJ, heartJ, spadeJ, \
           diamondQ, clubQ, heartQ, spadeQ, \
-          diamondK, clubK, heartK, spadeK ]
+          diamondK, clubK, heartK, spadeK, \
+          jokerR, jokerB ] #I messed this up lmao
 cardA = [ diamondA, clubA, heartA, spadeA ]
 card2 = [ diamond2, club2, heart2, spade2 ]
 card3 = [ diamond3, club3, heart3, spade3 ]
@@ -147,9 +148,6 @@ def getAmtJ(card): #getAmt, but with the joker
         return 10
     elif card in card21:
         return 21
-    else:
-        print('getAmt broke')
-        exit()      
 
 def genCard(cList, xList):
     '''Generates an card from cList, removes it from cList, and appends it to xList.
@@ -427,6 +425,56 @@ def single_playerJ(): #Changed name to indicate mode
             
         pygame.display.update()
 
+def rules_screen():
+    
+    pygame.init()
+
+    pygame.display.set_caption('BlackjackGUI')
+    
+    screen = pygame.display.set_mode((1280, 720))
+
+    #Establish background and match color of game
+    background = pygame.Surface(screen.get_size())
+    background = background.convert()
+    background.fill((80, 150, 15))
+
+    #Arrange Text
+    font1 = pygame.font.SysFont('arialbold', 45)
+    font2 = pygame.font.SysFont('arialbold', 25)
+    font3 = pygame.font.SysFont('arial', 15)
+
+    mode1 = font1.render('Normal Mode:', 1, white)
+    mode2 = font1.render('Joker Mode:', 1, white)
+
+    rules1 = font2.render('Normal Rules - Get as close to 21 without going over as you can. You start with 2 cards. Aces are 11 by default & can become 1. Face cards are 10.', 1, white)
+    rules2 = font2.render('Normal Rules, but with a twist - The joker card sabotages your hand! The joker card is valued at 21 by itself.', 1, white)
+
+    menuTxt = font3.render('Menu', 1, black)
+
+    menuB = pygame.draw.rect(background, gray, (1100, 600, 75, 25))
+
+
+    #Event loop for title screen
+    while True:
+
+        for event in pygame.event.get():
+
+            if event.type == QUIT:
+                pygame.quit()
+            elif event.type == pygame.MOUSEBUTTONDOWN and menuB.collidepoint(pygame.mouse.get_pos()):
+                title_screen() #Run main game if user clicks play button. 
+
+
+        #Show text on background
+        screen.blit(background, (0, 0))
+        screen.blit(menuTxt, (1115, 600))
+        screen.blit(mode1, (50, 100))
+        screen.blit(rules1, (50, 175))
+        screen.blit(mode2, (50, 300))
+        screen.blit(rules2, (50, 375))
+        
+        pygame.display.update() #GET THIS DISPLAY TO SHOW WHAT I JUST CODED.
+
 #Add a title screen; this also leads to the main game
 def title_screen():
 
@@ -450,11 +498,13 @@ def title_screen():
     playTxt = font3.render('Normal', 1, black)
     quitTxt = font3.render('Quit', 1, black)
     jokerTxt = font3.render('Joker', 1, black)
+    rulesTxt = font3.render('Rules', 1, black)
 
     #Establish buttons
-    playB = pygame.draw.rect(background, gray, (510, 400, 75, 25))
-    playJB = pygame.draw.rect(background, gray, (660, 400, 75, 25))
-    quitB = pygame.draw.rect(background, gray, (585, 440, 75, 25))
+    playB = pygame.draw.rect(background, gray, (530, 400, 75, 25))
+    playJB = pygame.draw.rect(background, gray, (640, 400, 75, 25))
+    quitB = pygame.draw.rect(background, gray, (585, 480, 75, 25))
+    rulesB = pygame.draw.rect(background, gray, (585, 440, 75, 25))
 
     #Event loop for title screen
     while True:
@@ -467,6 +517,8 @@ def title_screen():
                 single_player() #Run main game if user clicks play button. 
             elif event.type == pygame.MOUSEBUTTONDOWN and playJB.collidepoint(pygame.mouse.get_pos()):
                 single_playerJ() #Run joker game if user clicks play button. 
+            elif event.type == pygame.MOUSEBUTTONDOWN and rulesB.collidepoint(pygame.mouse.get_pos()):
+                rules_screen() #Run rules screen when user clicks.
             elif event.type == pygame.MOUSEBUTTONDOWN and quitB.collidepoint(pygame.mouse.get_pos()):
                 pygame.quit()
 
@@ -474,13 +526,13 @@ def title_screen():
         screen.blit(background, (0, 0))
         screen.blit(titleTxt, (530, 300))
         screen.blit(subTxt, (572, 350))
-        screen.blit(playTxt, (520, 400)) 
-        screen.blit(jokerTxt, (680, 400))
-        screen.blit(quitTxt, (605, 440))
+        screen.blit(playTxt, (540, 400)) 
+        screen.blit(jokerTxt, (660, 400))
+        screen.blit(quitTxt, (605, 480))
+        screen.blit(rulesTxt, (605, 440))
 
         pygame.display.update() #GET THIS DISPLAY TO SHOW WHAT I JUST CODED.
 
-if __name__ == '__main__':
-    title_screen() #Start program in the title screen
+title_screen() #Start program in the title screen
 
 

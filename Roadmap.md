@@ -13,5 +13,11 @@
 - [x] Connect title screen to main game
 
 ## Sprint 3
-- [] Add planned modes (2-player, Wildcard)
-- [] Update title screen, add buttons
+- [x] Add joker mode
+- [x] Update title screen, add buttons
+- [x] Add a rules screen
+
+## Work in Progress
+- [] getAmt error
+- [] Multiplayer mode
+- [] Button highlighting
